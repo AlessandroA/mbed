@@ -32,6 +32,21 @@
 #define OS_CLOCK                24000000
 #endif
 
+#elif defined(TARGET_ARM_MPS2_ARMv8MML)
+
+#ifndef INITIAL_SP
+#define INITIAL_SP              (0x20400000UL)
+#endif
+#ifndef OS_TASKCNT
+#define OS_TASKCNT              6
+#endif
+#ifndef OS_MAINSTKSIZE
+#define OS_MAINSTKSIZE          256
+#endif
+#ifndef OS_CLOCK
+#define OS_CLOCK                100000000
+#endif
+
 #endif
 
 #endif  // MBED_MBED_RTX_H
