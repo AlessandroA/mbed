@@ -35,6 +35,8 @@ class GCC(mbedToolchain):
                                extra_verbose=extra_verbose,
                                build_profile=build_profile)
 
+        self.cpu = []
+
         if target.core == "Cortex-M0+":
             cpu = "cortex-m0plus"
         elif target.core == "Cortex-M4F":
@@ -43,10 +45,14 @@ class GCC(mbedToolchain):
             cpu = "cortex-m7"
         elif target.core == "Cortex-M7FD":
             cpu = "cortex-m7"
+        elif target.core == "Cortex-M81":
+            cpu = None
         else:
             cpu = target.core.lower()
 
-        self.cpu = ["-mcpu=%s" % cpu]
+        if cpu:
+            self.cpu.append("-mcpu=%s" % cpu)
+
         if target.core.startswith("Cortex"):
             self.cpu.append("-mthumb")
 
@@ -69,6 +75,11 @@ class GCC(mbedToolchain):
             self.cpu.append("-mfloat-abi=hard")
             self.cpu.append("-mno-unaligned-access")
 
+        if target.core == "Cortex-M81":
+            self.cpu.append("-march=armv8-m.main")
+
+        # Note: We are using "-O2" instead of "-Os" to avoid this known GCC bug:
+        # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=46762
         self.flags["common"] += self.cpu
 
         main_cc = join(tool_path, "arm-none-eabi-gcc")
