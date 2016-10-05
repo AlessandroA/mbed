@@ -260,6 +260,11 @@ SECTIONS
         __END_BSS = .;
     } > m_data
 
+    /* Initializes stack on the end of block */
+    __StackTop = ORIGIN(m_data) + LENGTH(m_data);
+    __StackLimit = __StackTop - STACK_SIZE;
+    PROVIDE(__stack = __StackTop);
+
     .heap (NOLOAD):
     {
         . = ALIGN(8);
@@ -268,15 +273,11 @@ SECTIONS
         PROVIDE(end = .);
         __HeapBase = .;
         . += HEAP_SIZE;
-        __HeapLimit = .;
-        __heap_limit = .; /* Add for _sbrk */
-        __uvisor_heap_end = .;
     } > m_data
 
-    /* Initializes stack on the end of block */
-    __StackTop = ORIGIN(m_data) + LENGTH(m_data);
-    __StackLimit = __StackTop - STACK_SIZE;
-    PROVIDE(__stack = __StackTop);
+    __HeapLimit = __StackLimit;
+    __heap_limit = __HeapLimit; /* Add for _sbrk */
+    __uvisor_heap_end = __StackLimit;
 
     .ARM.attributes 0 : { *(.ARM.attributes) }
 
